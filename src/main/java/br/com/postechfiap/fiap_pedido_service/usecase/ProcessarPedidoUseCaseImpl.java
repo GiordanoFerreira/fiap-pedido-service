@@ -1,9 +1,6 @@
 package br.com.postechfiap.fiap_pedido_service.usecase;
 
-import br.com.postechfiap.fiap_pedido_service.adapters.clients.ProdutoClient;
-import br.com.postechfiap.fiap_pedido_service.domain.ItemPedido;
 import br.com.postechfiap.fiap_pedido_service.domain.Pedido;
-import br.com.postechfiap.fiap_pedido_service.domain.Produto;
 import br.com.postechfiap.fiap_pedido_service.domain.StatusPedido;
 import br.com.postechfiap.fiap_pedido_service.exception.pedido.EstoqueInsuficienteException;
 import br.com.postechfiap.fiap_pedido_service.exception.pedido.PagamentoRecusadoException;
@@ -15,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ProcessarPedidoUseCaseImpl implements ProcessarPedidoUseCase {
 
     private final ValidarClienteUseCase validarClienteUseCase;
@@ -30,9 +28,6 @@ public class ProcessarPedidoUseCaseImpl implements ProcessarPedidoUseCase {
         if (pedido.getItens() == null || pedido.getItens().isEmpty()) {
             throw new IllegalArgumentException("Pedido sem itens não pode ser processado.");
         }
-
-        pedido.setStatusPedido(StatusPedido.ABERTO);
-        pedidoRepository.save(pedido);
 
         // Valida cliente
         validarClienteUseCase.validar(pedido.getClienteId());

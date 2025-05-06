@@ -3,6 +3,7 @@ package br.com.postechfiap.fiap_pedido_service.usecase;
 import br.com.postechfiap.fiap_pedido_service.adapters.clients.ClienteClient;
 import br.com.postechfiap.fiap_pedido_service.exception.pedido.ClienteNaoEncontradoException;
 import br.com.postechfiap.fiap_pedido_service.interfaces.usecases.ValidarClienteUseCase;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ public class ValidarClienteUseCaseImpl implements ValidarClienteUseCase {
 
         try {
             clienteClient.buscarClientePorId(clienteId);
-        } catch (Exception e) {
+        } catch (FeignException.NotFound e) {
             throw new ClienteNaoEncontradoException("Cliente com ID: " + clienteId + " não encontrado.");
         }
     }

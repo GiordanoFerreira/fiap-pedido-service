@@ -1,6 +1,7 @@
 package br.com.postechfiap.fiap_pedido_service.adapters.clients;
 
-import br.com.postechfiap.fiap_pedido_service.domain.Produto;
+import br.com.postechfiap.fiap_pedido_service.adapters.clients.dto.ListaProdutoResponseDTO;
+import br.com.postechfiap.fiap_pedido_service.adapters.clients.dto.ProdutoResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -9,5 +10,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface ProdutoClient {
 
     @GetMapping("/produto")
-    Produto buscarProduto(@RequestParam String sku);
+    ListaProdutoResponseDTO buscarProduto(@RequestParam("query") String query);
 }
