@@ -37,6 +37,9 @@ public class ItemPedido {
     @JsonIgnore
     private Pedido pedido;
 
+    public ItemPedido(String sku, Integer quantidade) {
+    }
+
     public BigDecimal calcularSubtotal() {
         return precoUnitario.multiply(BigDecimal.valueOf(quantidade));
     }
