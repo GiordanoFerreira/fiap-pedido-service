@@ -3,6 +3,7 @@ package br.com.postechfiap.fiap_pedido_service.listener;
 import br.com.postechfiap.fiap_pedido_service.domain.DadosPagamento;
 import br.com.postechfiap.fiap_pedido_service.domain.ItemPedido;
 import br.com.postechfiap.fiap_pedido_service.domain.Pedido;
+import br.com.postechfiap.fiap_pedido_service.event.DadosPagamentoEvent;
 import br.com.postechfiap.fiap_pedido_service.event.ItemPedidoCreatedEvent;
 import br.com.postechfiap.fiap_pedido_service.event.PedidoCreatedEvent;
 import br.com.postechfiap.fiap_pedido_service.interfaces.usecases.ProcessarPedidoUseCase;
@@ -55,11 +56,14 @@ public class PedidoListener {
 
         UUID id = UUID.fromString(rootNode.get("id").asText());
         Long idCliente = rootNode.get("id_cliente").asLong();
-        String numeroCartao = rootNode.get("numero_cartao").asText();
+
+        JsonNode dpNode = rootNode.get("dados_pagamento");
+        DadosPagamentoEvent dadosPagamento = objectMapper.treeToValue(dpNode, DadosPagamentoEvent.class);
+
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
         LocalDateTime dataCriacao = LocalDateTime.parse(rootNode.get("data_criacao").asText(), formatter);
 
-        PedidoCreatedEvent event = new PedidoCreatedEvent(id, idCliente, produtos, numeroCartao, dataCriacao);
+        PedidoCreatedEvent event = new PedidoCreatedEvent(id, idCliente, produtos, dadosPagamento, dataCriacao);
         System.out.println("✅ Desserialização (via JsonNode) para PedidoCreatedEvent: " + event);
         System.out.print("Lista de produtos --->" + event.produtos().toString());
 
@@ -75,8 +79,11 @@ public class PedidoListener {
               return itemPedido;}).collect(Collectors.toList()));
 
         DadosPagamento dp = new DadosPagamento(
-                event.numeroCartao()
-            );
+                event.dadosPagamento().numeroCartao(),
+                event.dadosPagamento().codigoSegurancaCartao(),
+                event.dadosPagamento().nomeTitularCartao(),
+                event.dadosPagamento().dataValidade()
+        );
         pedido.setDadosPagamento(dp);
 
         // Adicionando o System.out para debug

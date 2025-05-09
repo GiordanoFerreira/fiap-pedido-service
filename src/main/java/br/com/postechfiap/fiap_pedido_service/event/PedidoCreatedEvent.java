@@ -12,6 +12,6 @@ public record PedidoCreatedEvent(
         UUID id,
         Long idCliente,
         List<ItemPedidoCreatedEvent> produtos,
-        String numeroCartao,
+        DadosPagamentoEvent dadosPagamento,
         LocalDateTime dataCriacao
-){}
+) {}
