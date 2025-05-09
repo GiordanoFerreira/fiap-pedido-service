@@ -1,6 +1,6 @@
 package br.com.postechfiap.fiap_pedido_service.adapters.clients;
 
-import br.com.postechfiap.fiap_pedido_service.adapters.clients.request.SolicitarPagamentoRequest;
+import br.com.postechfiap.fiap_pedido_service.adapters.clients.request.SolicitarPagamentoRequestDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface PagamentoClient {
 
     @PostMapping("/pagamentos/compra")
-    void criarPagamento(@RequestBody SolicitarPagamentoRequest request);
+    void criarPagamento(@RequestBody SolicitarPagamentoRequestDTO request);
 }
