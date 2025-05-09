@@ -1,12 +1,11 @@
-# Só rodar as linhas comentadas se o projeto não tiver sido buildado por fora
-#FROM maven:3.9.9-eclipse-temurin-21 AS builder
-#WORKDIR /app
-#COPY pom.xml .
-#COPY src ./src
-#RUN mvn clean package -DskipTests
-
-FROM eclipse-temurin:21-jdk-alpine
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
 WORKDIR /app
-COPY target/fiap-pedido-service-*.jar app.jar
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8079
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "app.jar"]
