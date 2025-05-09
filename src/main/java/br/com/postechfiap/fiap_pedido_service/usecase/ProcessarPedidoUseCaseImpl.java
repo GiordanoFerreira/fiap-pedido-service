@@ -19,6 +19,7 @@ public class ProcessarPedidoUseCaseImpl implements ProcessarPedidoUseCase {
     private final PreencherInformacoesProdutosUseCase preencherInformacoesProdutosUseCase;
     private final CalcularValorTotalPedidoUseCase calcularValorTotalPedidoUseCase;
     private final BaixarEstoqueUseCase baixarEstoqueUseCase;
+    private final ReporEstoqueUseCase reporEstoqueUseCase;
     private final SolicitarPagamentoUseCase solicitarPagamentoUseCase;
     private final PedidoRepository pedidoRepository;
 
@@ -51,6 +52,7 @@ public class ProcessarPedidoUseCaseImpl implements ProcessarPedidoUseCase {
         try {
             solicitarPagamentoUseCase.solicitar(pedido);
         } catch (PagamentoRecusadoException e) {
+            reporEstoqueUseCase.repor(pedido);
             pedido.setStatusPedido(StatusPedido.FECHADO_SEM_CREDITO);
             pedidoRepository.save(pedido);
             return;
