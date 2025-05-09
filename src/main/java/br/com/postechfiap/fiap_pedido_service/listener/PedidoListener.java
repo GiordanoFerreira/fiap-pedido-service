@@ -18,6 +18,7 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -38,7 +39,7 @@ public class PedidoListener {
     @KafkaHandler
     public void onPedidoCreated(@Payload String messageAsJson) throws JsonProcessingException {
         try{
-        System.out.println("📥 Mensagem JSON bruta recebida do Kafka: " + messageAsJson);
+        System.out.println("Mensagem JSON bruta recebida do Kafka: " + messageAsJson);
         String realJson = objectMapper.readValue(messageAsJson, String.class);
         JsonNode rootNode = objectMapper.readTree(realJson);
         System.out.println("JSON NODE   " + rootNode);
@@ -56,15 +57,20 @@ public class PedidoListener {
 
         UUID id = UUID.fromString(rootNode.get("id").asText());
         Long idCliente = rootNode.get("id_cliente").asLong();
+        String numeroCartao = rootNode.get("numero_cartao").asText();
+        String codigoSegurancaCartao = rootNode.get("codigo_seguranca_cartao").asText();
+        String nomeTitularCartao = rootNode.get("nome_titular_cartao").asText();
+        DateTimeFormatter formatter_local_date = DateTimeFormatter.ISO_LOCAL_DATE;
+        LocalDate dataValidade = LocalDate.parse(rootNode.get("data_validade").asText(),formatter_local_date);
 
-        JsonNode dpNode = rootNode.get("dados_pagamento");
-        DadosPagamentoEvent dadosPagamento = objectMapper.treeToValue(dpNode, DadosPagamentoEvent.class);
 
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
         LocalDateTime dataCriacao = LocalDateTime.parse(rootNode.get("data_criacao").asText(), formatter);
 
+        DadosPagamentoEvent dadosPagamento = new DadosPagamentoEvent(numeroCartao,
+                codigoSegurancaCartao,nomeTitularCartao,dataValidade);
         PedidoCreatedEvent event = new PedidoCreatedEvent(id, idCliente, produtos, dadosPagamento, dataCriacao);
-        System.out.println("✅ Desserialização (via JsonNode) para PedidoCreatedEvent: " + event);
+        System.out.println("Desserialização (via JsonNode) para PedidoCreatedEvent: " + event);
         System.out.print("Lista de produtos --->" + event.produtos().toString());
 
         // 1. Monta domínio Pedido
@@ -97,7 +103,7 @@ public class PedidoListener {
         processarPedidoUseCase.executar(pedido);
 
         } catch (Exception e) {
-            System.err.println("❌ Erro ao desserializar: " + e.getMessage());
+            System.err.println(" Erro ao desserializar: " + e.getMessage());
             e.printStackTrace(); // Imprima o stack trace completo para entender o erro
         }
     }
