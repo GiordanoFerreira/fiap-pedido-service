@@ -3,7 +3,7 @@ package br.com.postechfiap.fiap_pedido_service.adapters.clients.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +16,7 @@ public class ClienteResponseDTO {
 
     private Long id;
     private String nome;
-    private LocalDateTime dataNascimento;
+    private LocalDate dataNascimento;
     private String cpf;
     private String email;
     private EnderecoResponseDTO endereco;
