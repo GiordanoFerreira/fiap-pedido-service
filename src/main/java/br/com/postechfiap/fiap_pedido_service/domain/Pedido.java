@@ -1,7 +1,6 @@
 package br.com.postechfiap.fiap_pedido_service.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -12,8 +11,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
-@ToString
+@EqualsAndHashCode(callSuper = false, exclude = "itens")
+@ToString(exclude = "itens")
 @Builder(toBuilder = true)
 @Entity
 @Table(name = Pedido.TABLE_NAME)
