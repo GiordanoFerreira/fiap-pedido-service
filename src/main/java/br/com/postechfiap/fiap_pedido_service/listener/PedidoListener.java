@@ -76,12 +76,15 @@ public class PedidoListener {
         // 1. Monta domínio Pedido
         Pedido pedido = new Pedido();
         pedido.setClienteId(event.idCliente());
-        pedido.setItens(
-          event.produtos().stream().map(itemCreated -> {
-              ItemPedido itemPedido = new ItemPedido();
-              itemPedido.setSkuProduto(itemCreated.sku());
-              itemPedido.setQuantidade(itemCreated.quantidade());
-              return itemPedido;}).collect(Collectors.toList()));
+
+        List<ItemPedido> itens = event.produtos().stream().map(itemCreated -> {
+            ItemPedido itemPedido = new ItemPedido();
+            itemPedido.setSkuProduto(itemCreated.sku());
+            itemPedido.setQuantidade(itemCreated.quantidade());
+            itemPedido.setPedido(pedido);
+            return itemPedido;
+        }).collect(Collectors.toList());
+        pedido.setItens(itens);
 
         DadosPagamento dp = new DadosPagamento(
                 event.dadosPagamento().numeroCartao(),

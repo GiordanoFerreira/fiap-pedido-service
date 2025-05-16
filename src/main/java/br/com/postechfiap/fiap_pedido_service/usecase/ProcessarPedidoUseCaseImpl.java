@@ -39,6 +39,9 @@ public class ProcessarPedidoUseCaseImpl implements ProcessarPedidoUseCase {
         // Calcula valor total
         calcularValorTotalPedidoUseCase.calcular(pedido);
 
+        pedido.setStatusPedido(StatusPedido.ABERTO);
+        pedidoRepository.save(pedido);
+
         // Baixa de estoque
         try {
             baixarEstoqueUseCase.baixar(pedido);
@@ -63,4 +66,3 @@ public class ProcessarPedidoUseCaseImpl implements ProcessarPedidoUseCase {
         pedidoRepository.save(pedido);
     }
 }
-
