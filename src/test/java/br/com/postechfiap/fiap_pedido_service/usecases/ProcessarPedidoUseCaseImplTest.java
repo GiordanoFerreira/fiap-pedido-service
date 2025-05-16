@@ -15,11 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -42,6 +38,8 @@ class ProcessarPedidoUseCaseImplTest {
     private BaixarEstoqueUseCase baixarEstoqueUseCase;
     @Mock
     private SolicitarPagamentoUseCase solicitarPagamentoUseCase;
+    @Mock
+    private ReporEstoqueUseCase reporEstoqueUseCase;
     @Mock
     private PedidoRepository pedidoRepository;
 
@@ -123,6 +121,7 @@ class ProcessarPedidoUseCaseImplTest {
         doNothing().when(baixarEstoqueUseCase).baixar(pedido);
         doThrow(new PagamentoRecusadoException("Pagamento recusado"))
                 .when(solicitarPagamentoUseCase).solicitar(pedido);
+        doNothing().when(reporEstoqueUseCase).repor(pedido);
 
         // Act
         processarPedidoUseCase.executar(pedido);

@@ -8,20 +8,20 @@ import br.com.postechfiap.fiap_pedido_service.event.ItemPedidoCreatedEvent;
 import br.com.postechfiap.fiap_pedido_service.event.PedidoCreatedEvent;
 import br.com.postechfiap.fiap_pedido_service.interfaces.usecases.ProcessarPedidoUseCase;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -75,7 +75,6 @@ public class PedidoListener {
 
         // 1. Monta domínio Pedido
         Pedido pedido = new Pedido();
-        pedido.setId(event.id());
         pedido.setClienteId(event.idCliente());
         pedido.setItens(
           event.produtos().stream().map(itemCreated -> {
