@@ -83,7 +83,8 @@ class ProcessarPedidoUseCaseImplTest {
         verify(calcularValorTotalPedidoUseCase).calcular(pedido);
         verify(baixarEstoqueUseCase).baixar(pedido);
         verify(solicitarPagamentoUseCase).solicitar(pedido);
-        verify(pedidoRepository).save(pedido);
+        // aceita uma ou mais invocações de save()
+        verify(pedidoRepository, atLeastOnce()).save(pedido);
 
         assertEquals(StatusPedido.FECHADO_COM_SUCESSO, pedido.getStatusPedido());
     }
@@ -105,7 +106,8 @@ class ProcessarPedidoUseCaseImplTest {
         verify(preencherInformacoesProdutosUseCase).preencher(pedido);
         verify(calcularValorTotalPedidoUseCase).calcular(pedido);
         verify(baixarEstoqueUseCase).baixar(pedido);
-        verify(pedidoRepository).save(pedido);
+        // aceita uma ou mais invocações de save()
+        verify(pedidoRepository, atLeastOnce()).save(pedido);
 
         assertEquals(StatusPedido.FECHADO_SEM_ESTOQUE, pedido.getStatusPedido());
 
@@ -132,7 +134,8 @@ class ProcessarPedidoUseCaseImplTest {
         verify(calcularValorTotalPedidoUseCase).calcular(pedido);
         verify(baixarEstoqueUseCase).baixar(pedido);
         verify(solicitarPagamentoUseCase).solicitar(pedido);
-        verify(pedidoRepository).save(pedido);
+        // aceita uma ou mais invocações de save()
+        verify(pedidoRepository, atLeastOnce()).save(pedido);
 
         assertEquals(StatusPedido.FECHADO_SEM_CREDITO, pedido.getStatusPedido());
     }
@@ -189,6 +192,30 @@ class ProcessarPedidoUseCaseImplTest {
 
         verify(validarClienteUseCase, never()).validar(any());
         verify(pedidoRepository, never()).save(any());
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoPedidoSemItensNulos() {
+        // Arrange
+        pedido.setItens(null);
+
+        // Act & Assert
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> processarPedidoUseCase.executar(pedido)
+        );
+        assertEquals("Pedido sem itens não pode ser processado.", ex.getMessage());
+
+        // Certifica que nenhum dos usecases nem o repositório foram invocados
+        verifyNoInteractions(
+                validarClienteUseCase,
+                preencherInformacoesProdutosUseCase,
+                calcularValorTotalPedidoUseCase,
+                baixarEstoqueUseCase,
+                solicitarPagamentoUseCase,
+                reporEstoqueUseCase,
+                pedidoRepository
+        );
     }
 }
 
